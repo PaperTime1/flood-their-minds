@@ -1,0 +1,18 @@
+Support : Flood it !
+
+Idées : 
+
+- Couleurs dans une liste (Nombre Potentiellement infini)
+- Ajouts de "murs" comme difficultés supplémentaires
+- Ajout d'un mode alternatif avec nombre de coup limités par celui de notre IA
+
+To-Do-List :
+
+- Re-reprendre Tkinter
+- Commencer par une version matricielle du jeu pour le principe de propagation (Considérer d'abord la première étendus, ajouter les cases de couleurs et faire l'extension en prenant en compte les cases déjà gagnés)
+- En faire une interface graphique (quel taille pour chaque case ?)
+- Essayer de rajouter des options
+- Premiers bêta testing hors de chez moi
+- Faire le menu
+- Deuxième Bêta testing hors de chez moi
+- (Déjà on aura bien avancé)
