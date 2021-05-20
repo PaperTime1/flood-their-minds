@@ -12,9 +12,15 @@ class Partie():
         self.taille = taille
         self.nbClrs = nbClrs
         self.expansion = self.expandre( 0, 0,[(0,0)])
+        self.nbCoups=0
 
     def victoire(self):
+        """renvoie True si, et seulement si, toutes les cases sont de la même couleur"""
         return self.matrice.count(self.matrice[0])==self.taille and self.matrice[0].count(self.matrice[0][0])
+
+    def defaite(self):
+        """renvoie True si, et seulement si le nombre de coups est excédentaire"""
+        return self.nbCoups>=22
 
     def expandre(self, i : int, j : int, expansion_partielle : list):
         if i>0:
@@ -63,8 +69,15 @@ class Partie():
         for u,v in self.expansion :
             self.matrice[u][v]=n
         self.expansion=self.expandre(0,0,[(0,0)])
-        print(self.expansion)
+        self.nbCoups+=1
+        #print(self.expansion)
     
+    def plateau(self):
+        return self.matrice
+
+    def total(self):
+        return self.nbCoups
+
     def __str__(self):
         return "\n".join(["\t".join([str(y) for y in x]) for x in self.matrice])
 
