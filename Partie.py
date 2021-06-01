@@ -8,11 +8,13 @@ class Partie():
         allant de 0 à *nbClrs-1* (Qui pourra être utilisé pour une
         version daltonienne du jeu) """
         assert nbClrs > 2 and taille > 5
+        self.quatrecoins=set()
         self.matrice = [[randint(0,nbClrs-1) for i in range(taille)] for j in range(taille)]
         self.taille = taille
         self.nbClrs = nbClrs
-        self.expansion = self.expandre( 0, 0,[(0,0)])
+        self.expansion = self.expandre([(0,0)])
         self.nbCoups=0
+        
 
     def victoire(self):
         """renvoie True si, et seulement si, toutes les cases sont de la même couleur"""
@@ -22,35 +24,77 @@ class Partie():
         """renvoie True si, et seulement si le nombre de coups est excédentaire"""
         return self.nbCoups>=22
 
-    def expandre(self, i : int, j : int, expansion_partielle : list):
-        if i>0:
-            u,v=self.case_a_gauche(i,j)
-            #print("(",u,",",v,")")
-            if (u,v) not in expansion_partielle and self.matrice[i][j]==self.matrice[u][v]:
-                expansion_partielle.append((u,v))
-                self.expandre(u,v,expansion_partielle)
-        if i<self.taille-1:
-            u,v=self.case_a_droite(i,j)
-            #print("(",u,",",v,")")
-            if (u,v) not in expansion_partielle and self.matrice[i][j]==self.matrice[u][v]:
-                expansion_partielle.append((u,v))
-                self.expandre(u,v,expansion_partielle)
-        if j>0:
-            u,v=self.case_en_haut(i,j)
-            #print("(",u,",",v,")")
-            if (u,v) not in expansion_partielle and self.matrice[i][j]==self.matrice[u][v]:
-                expansion_partielle.append((u,v))
-                self.expandre(u,v,expansion_partielle)
-        if j<self.taille-1:
-            u,v=self.case_en_bas(i,j)
-            #print("(",u,",",v,")")
-            if (u,v) not in expansion_partielle and self.matrice[i][j]==self.matrice[u][v]:
-                expansion_partielle.append((u,v))
-                self.expandre(u,v,expansion_partielle)
-        #print(expansion_partielle)
+    def expandre(self, expansion_partielle : list):
+        liste = set([x for x in expansion_partielle])
+        liste.difference_update(self.quatrecoins)
+        liste=list(liste)
+        while liste != [] :
+            i,j=liste.pop()
+            if i>0:
+                u,v=self.case_a_gauche(i,j)
+                #print("(",u,",",v,")")
+                if (u,v) not in expansion_partielle and self.matrice[i][j]==self.matrice[u][v]:
+                    expansion_partielle.append((u,v))
+                    liste.append((u,v))
+            if i<self.taille-1:
+                u,v=self.case_a_droite(i,j)
+                #print("(",u,",",v,")")
+                if (u,v) not in expansion_partielle and self.matrice[i][j]==self.matrice[u][v]:
+                    expansion_partielle.append((u,v))
+                    liste.append((u,v))
+            if j>0:
+                u,v=self.case_en_haut(i,j)
+                #print("(",u,",",v,")")
+                if (u,v) not in expansion_partielle and self.matrice[i][j]==self.matrice[u][v]:
+                    expansion_partielle.append((u,v))
+                    liste.append((u,v))
+            if j<self.taille-1:
+                u,v=self.case_en_bas(i,j)
+                #print("(",u,",",v,")")
+                if (u,v) not in expansion_partielle and self.matrice[i][j]==self.matrice[u][v]:
+                    expansion_partielle.append((u,v))
+                    liste.append((u,v))
+            #print(expansion_partielle)
         return expansion_partielle
         
+    def bords(self):
+        liste=[]
+        bar=set(self.expansion)
+        bar.difference_update(self.quatrecoins)
+        for (i,j) in self.expansion :
+            drapeau=True
+            if i>0:
+                u,v=self.case_a_gauche(i,j)
+                #print("(",u,",",v,")")
+                if (u,v) not in self.expansion :
+                    liste.append((u,v))
+                    drapeau=False
 
+            if i<self.taille-1:
+                u,v=self.case_a_droite(i,j)
+                #print("(",u,",",v,")")
+                if (u,v) not in self.expansion:
+                    liste.append((u,v))
+                    drapeau=False
+
+            if j>0:
+                u,v=self.case_en_haut(i,j)
+                #print("(",u,",",v,")")
+                if (u,v) not in self.expansion:
+                    liste.append((u,v))
+                    drapeau=False
+
+            if j<self.taille-1:
+                u,v=self.case_en_bas(i,j)
+                #print("(",u,",",v,")")
+                if (u,v) not in self.expansion:
+                    liste.append((u,v))
+                    drapeau=False
+            
+            if drapeau :
+                self.quatrecoins.add((i,j))
+        
+        return liste
 
     def case_a_gauche(self, i : int, j : int):
         return i-1,j
@@ -68,7 +112,7 @@ class Partie():
         n=self.matrice[i][j]
         for u,v in self.expansion :
             self.matrice[u][v]=n
-        self.expansion=self.expandre(0,0,[(0,0)])
+        self.expansion[:]=self.expandre(self.expansion)
         self.nbCoups+=1
         #print(self.expansion)
     
